@@ -21,7 +21,7 @@ You will need:
     - a push button connected between GPIO 18 and GND (configurable)
     - a dual colour LED (or 2 single LEDs) connected between GPIO 24 & 25 and GND (configurable)
 
-## You wanna give it a try? Check out the [Installation Guide](https://github.com/alexa-pi/AlexaPi/wiki/Installation).
+## You wanna give it a try? Check out the [Installation Guide](https://github.com/bigcat2014/AlexaPi/wiki/Installation).
 
 ## Issues / Bugs / Documentation / etc.
 
