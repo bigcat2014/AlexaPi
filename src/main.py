@@ -501,17 +501,20 @@ def trigger_callback(trigger):
 	logger.info("Triggered: %s", trigger.name)
 
 	triggers.disable()
-
+	logger.debug("Triggers disabled")
+	
 	trigger_thread = threading.Thread(target=trigger_process, args=(trigger,))
 	trigger_thread.setDaemon(True)
 	trigger_thread.start()
-
+	logger.debug("trigger_process thread started (trigger_callback)")
+	
 
 def trigger_process(trigger):
-
+	logger.debug("trigger_process thread started (trigger_process)")
 	if player.is_playing():
 		player.stop()
-
+		logger.debug("Player stopped")
+		
 	# clean up the temp directory
 	if not debug:
 		for some_file in os.listdir(tmp_path):
@@ -521,10 +524,12 @@ def trigger_process(trigger):
 					os.remove(file_path)
 			except Exception as exp: # pylint: disable=broad-except
 				logger.warning(exp)
-
+	
+	logger.debug("Starting pre-interaction process")
 	if event_commands['pre_interaction']:
 		subprocess.Popen(event_commands['pre_interaction'], shell=True, stdout=subprocess.PIPE)
-
+	logger.debug("Pre-interaction process complete")
+	
 	force_record = None
 	if trigger.event_type in triggers.types_continuous:
 		force_record = (trigger.continuous_callback, trigger.event_type in triggers.types_vad)

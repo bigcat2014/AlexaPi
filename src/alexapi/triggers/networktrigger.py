@@ -44,32 +44,40 @@ class NetworkTrigger(BaseTrigger):
 			client_thread.start()
 			
 	def handle_client(self, client):
-		self._enabled.wait()
 		
-		triggered = False
-		while not triggered:
-			# See if the socket is marked as having data ready.
-			ready_to_read, ready_to_write, in_error = select.select((client,), [], [], 0)
+		message_header = {}
+		message_body = {}
+		msg = {'message_header': message_header, 'message_body': message_body}
+		
+		if not self._enabled.is_set():
+			triggered = False
+			while not triggered:
+				# See if the socket is marked as having data ready.
+				ready_to_read, ready_to_write, in_error = select.select((client,), [], [], 0)
+				
+				if ready_to_read:
+					j = json.loads(client.recv(NetworkTrigger.buffer_size))
+					
+					# Client cancelled the connection
+					if len(j) == 0:
+						break
+					
+					msg_header = j['message_header']
+					# msg_body = j['message_body']
+					
+					if msg_header['type'] == TriggerMessages.TRIGGER:
+						triggered = True
+					elif msg_header['type'] == TriggerMessages.OTHER:
+						pass
+					
+			if triggered:
+				self._disabled.set()
+				self._trigger_callback(self)
+				message_header['is_successful'] = Status.SUCCESS
+		else:
+			message_header['is_successful'] = Status.FAIL
 			
-			if ready_to_read:
-				j = json.loads(client.recv(NetworkTrigger.buffer_size))
-				
-				# Client cancelled the connection
-				if len(j) == 0:
-					break
-				
-				msg_header = j['message_header']
-				# msg_body = j['message_body']
-				
-				if msg_header['type'] == TriggerMessages.TRIGGER:
-					triggered = True
-				elif msg_header['type'] == TriggerMessages.OTHER:
-					pass
-				
-		if triggered:
-			self._disabled.set()
-			self._trigger_callback(self)
-		
+		client.send(json.dumps(msg))
 		client.close()
 			
 	def enable(self):
@@ -84,3 +92,7 @@ class NetworkTrigger(BaseTrigger):
 class TriggerMessages(object):
 	TRIGGER = 'trigger'
 	OTHER = 'other'
+	
+class Status(object):
+	SUCCESS = 'success'
+	FAIL = 'fail'
