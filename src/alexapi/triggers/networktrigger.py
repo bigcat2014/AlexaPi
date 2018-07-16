@@ -66,9 +66,8 @@ class NetworkTrigger(BaseTrigger):
 				elif msg_header['type'] == TriggerMessages.OTHER:
 					pass
 				
-				self._disabled_sync_lock.set()
-		
 		if triggered:
+			self._disabled_sync_lock.set()
 			self._trigger_callback(self)
 		
 		client.close()
