@@ -18,8 +18,8 @@ class NetworkTrigger(BaseTrigger):
 	def __init__(self, config, trigger_callback):
 		super(NetworkTrigger, self).__init__(config, trigger_callback, 'network')
 		
-		self._enabled_lock = threading.Event()
-		self._disabled_sync_lock = threading.Event()
+		self._enabled = threading.Event()
+		self._disabled = threading.Event()
 		
 		self._host = ''
 		self._port = self._tconfig['port']
@@ -44,7 +44,7 @@ class NetworkTrigger(BaseTrigger):
 			client_thread.start()
 			
 	def handle_client(self, client):
-		self._enabled_lock.wait()
+		self._enabled.wait()
 		
 		triggered = False
 		while not triggered:
@@ -67,18 +67,18 @@ class NetworkTrigger(BaseTrigger):
 					pass
 				
 		if triggered:
-			self._disabled_sync_lock.set()
+			self._disabled.set()
 			self._trigger_callback(self)
 		
 		client.close()
 			
 	def enable(self):
-		self._enabled_lock.set()
-		self._disabled_sync_lock.clear()
+		self._enabled.set()
+		self._disabled.clear()
 
 	def disable(self):
-		self._enabled_lock.clear()
-		self._disabled_sync_lock.wait()
+		self._enabled.clear()
+		self._disabled.wait()
 		
 		
 class TriggerMessages(object):
