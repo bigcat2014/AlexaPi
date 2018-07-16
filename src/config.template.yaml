@@ -69,6 +69,17 @@ triggers:
       audio_file: ""
 
 
+  network:
+    enabled: true
+    voice_confirm: true
+
+    # port to listen for clients on
+    port: 328
+
+    # number of network triggers expected
+    num_network_triggers: 1
+
+
   pocketsphinx:
     enabled: true
     voice_confirm: true
