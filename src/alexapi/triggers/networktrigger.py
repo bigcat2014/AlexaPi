@@ -39,7 +39,7 @@ class NetworkTrigger(BaseTrigger):
 	def thread(self):
 		while True:
 			client, client_address = self._server.accept()
-			client_thread = threading.Thread(target=self.handle_client, args=(client))
+			client_thread = threading.Thread(target=self.handle_client, args=(client,))
 			client_thread.daemon = True
 			client_thread.start()
 			
@@ -71,7 +71,6 @@ class NetworkTrigger(BaseTrigger):
 		if triggered:
 			self._trigger_callback(self)
 		
-		client.shutdown()
 		client.close()
 			
 	def enable(self):
