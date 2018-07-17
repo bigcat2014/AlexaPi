@@ -27,7 +27,7 @@ class PocketsphinxTrigger(BaseTrigger):
 		self._capture = capture
 
 		self._enabled_lock = threading.Event()
-		self._disabled_sync_lock = threading.Event()
+		# self._disabled_sync_lock = threading.Event()
 		self._decoder = None
 
 	def setup(self):
@@ -92,9 +92,9 @@ class PocketsphinxTrigger(BaseTrigger):
 
 	def enable(self):
 		self._enabled_lock.set()
-		self._disabled_sync_lock.clear()
+		# self._disabled_sync_lock.clear()
 
 	def disable(self):
 		self._enabled_lock.clear()
 		# self._disabled_sync_lock.wait()
-		self._disabled_sync_lock.set()
+		# self._disabled_sync_lock.set()

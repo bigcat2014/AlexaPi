@@ -18,8 +18,8 @@ class NetworkTrigger(BaseTrigger):
 	def __init__(self, config, trigger_callback):
 		super(NetworkTrigger, self).__init__(config, trigger_callback, 'network')
 		
-		self._enabled = threading.Event()
-		self._disabled = threading.Event()
+		self._enabled_lock = threading.Event()
+		# self._disabled_lock = threading.Event()
 		
 		self._host = ''
 		self._port = self._tconfig['port']
@@ -49,7 +49,7 @@ class NetworkTrigger(BaseTrigger):
 		message_body = {}
 		msg = {'message_header': message_header, 'message_body': message_body}
 		
-		if not self._enabled.is_set():
+		if not self._enabled_lock.is_set():
 			triggered = False
 			while not triggered:
 				# See if the socket is marked as having data ready.
@@ -71,7 +71,7 @@ class NetworkTrigger(BaseTrigger):
 						pass
 					
 			if triggered:
-				self._disabled.set()
+				# self._disabled_lock.set()
 				self._trigger_callback(self)
 				message_header['is_successful'] = Status.SUCCESS
 		else:
@@ -81,12 +81,12 @@ class NetworkTrigger(BaseTrigger):
 		client.close()
 			
 	def enable(self):
-		self._enabled.set()
-		self._disabled.clear()
+		self._enabled_lock.set()
+		# self._disabled_lock.clear()
 
 	def disable(self):
-		self._enabled.clear()
-		self._disabled.wait()
+		self._enabled_lock.clear()
+		# self._disabled_lock.wait()
 		
 		
 class TriggerMessages(object):
