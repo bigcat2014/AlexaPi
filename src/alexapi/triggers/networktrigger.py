@@ -71,7 +71,7 @@ class NetworkTrigger(BaseTrigger):
 						pass
 					
 			if triggered:
-				# self._disabled.set()
+				self._disabled.set()
 				self._trigger_callback(self)
 				message_header['is_successful'] = Status.SUCCESS
 		else:
@@ -86,8 +86,7 @@ class NetworkTrigger(BaseTrigger):
 
 	def disable(self):
 		self._enabled.clear()
-		# self._disabled.wait()
-		self._disabled.set()
+		self._disabled.wait()
 		
 		
 class TriggerMessages(object):
