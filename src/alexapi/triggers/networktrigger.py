@@ -49,7 +49,7 @@ class NetworkTrigger(BaseTrigger):
 		message_body = {}
 		msg = {'message_header': message_header, 'message_body': message_body}
 		
-		if not self._enabled_lock.is_set():
+		if self._enabled_lock.is_set():
 			triggered = False
 			while not triggered:
 				# See if the socket is marked as having data ready.
