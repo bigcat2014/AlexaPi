@@ -85,16 +85,11 @@ class PocketsphinxTrigger(BaseTrigger):
 
 			self._decoder.end_utt()
 
-			# self._disabled_sync_lock.set()
-
 			if triggered:
 				self._trigger_callback(self)
 
 	def enable(self):
 		self._enabled_lock.set()
-		# self._disabled_sync_lock.clear()
 
 	def disable(self):
 		self._enabled_lock.clear()
-		# self._disabled_sync_lock.wait()
-		# self._disabled_sync_lock.set()
