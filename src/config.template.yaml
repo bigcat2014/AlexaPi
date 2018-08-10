@@ -74,7 +74,7 @@ triggers:
     voice_confirm: true
 
     # port to listen for clients on
-    port: 328
+    port: 12345
 
     # number of network triggers expected
     num_network_triggers: 1
